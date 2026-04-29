@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/rzxbxie/algorithm/sort"
+	"github.com/rzxbxie/algorithm/go/sort"
 )
 
 func main() {
