@@ -1,4 +1,4 @@
-package sort
+package backtrack
 
 // Permutation 返回 nums 的所有全排列（回溯法）
 // 时间复杂度: O(n * n!)  空间复杂度: O(n)
