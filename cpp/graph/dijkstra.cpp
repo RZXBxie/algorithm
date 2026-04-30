@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <queue>
 
 using namespace std;
 
@@ -41,6 +42,41 @@ vector<ll> dijkstra(const vector<vector<ll> > &w, int src) {
     return dist;
 }
 
+/**
+ * dijkstra 堆优化版本 单源最短路
+ * @param g 邻接表，g[u] = {{v, w}, ...} 表示存在边 u -> v，权重为 w
+ * @param src 起点
+ * @return 从src到各点的最短距离，不可达为INF
+ */
+vector<ll> dijkstra_heap(const vector<vector<pair<int, ll>>> &g, int src) {
+    const int n = g.size();
+    vector<ll> dist(n, INF);
+    dist[src] = 0;
+
+
+    // 小顶堆，元素为 {距离, 节点}
+    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+    pq.emplace(0, src);
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        // 已经有更短的距离，跳过该过时记录
+        if (d > dist[u]) continue;
+
+        // 松弛，更新邻接节点的距离
+        for (auto [v, w]: g[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.emplace(dist[v], v);
+            }
+        }
+    }
+
+    return dist;
+}
+
 int main() {
     vector<vector<ll> > w = {
         {0, 4, 2, INF, INF, INF, INF},
@@ -55,6 +91,21 @@ int main() {
     for (auto v: result) {
         cout << v << " ";
     }
+    cout << endl;
+
+    // 邻接矩阵转邻接表
+    const int n = w.size();
+    vector<vector<pair<int, ll>>> g(n);
+    for (int u = 0; u < n; ++u) {
+        for (int v = 0; v < n; ++v) {
+            if (u != v && w[u][v] != INF) g[u].emplace_back(v, w[u][v]);
+        }
+    }
+    vector<ll> result2 = dijkstra_heap(g, 0);
+    for (auto v: result2) {
+        cout << v << " ";
+    }
+    cout << endl;
 
     return 0;
 }
